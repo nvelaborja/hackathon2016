@@ -1,0 +1,243 @@
+
+#----------------------------- Global Properties ----------------------------#
+
+/outputDir:bin/$(Platform)
+/intermediateDir:obj/$(Platform)
+/platform:Windows
+/config:
+/profile:Reach
+/compress:False
+
+#-------------------------------- References --------------------------------#
+
+
+#---------------------------------- Content ---------------------------------#
+
+#begin sspp_BallNoise1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_BallNoise1.wav
+
+#begin sspp_BallNoise2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_BallNoise2.wav
+
+#begin sspp_BallNoise3.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_BallNoise3.wav
+
+#begin sspp_BallNoise4.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_BallNoise4.wav
+
+#begin sspp_BallNoise5.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_BallNoise5.wav
+
+#begin sspp_buttonClick.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_buttonClick.wav
+
+#begin sspp_buttonHover.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_buttonHover.wav
+
+#begin sspp_characterSoundsP1G1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP1G1.wav
+
+#begin sspp_characterSoundsP1G2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP1G2.wav
+
+#begin sspp_characterSoundsP1G3.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP1G3.wav
+
+#begin sspp_characterSoundsP1G4.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP1G4.wav
+
+#begin sspp_characterSoundsP1G5.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP1G5.wav
+
+#begin sspp_characterSoundsP1J1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP1J1.wav
+
+#begin sspp_characterSoundsP1J2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP1J2.wav
+
+#begin sspp_characterSoundsP1J3.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP1J3.wav
+
+#begin sspp_characterSoundsP1T1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP1T1.wav
+
+#begin sspp_characterSoundsP1T2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP1T2.wav
+
+#begin sspp_characterSoundsP2G1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP2G1.wav
+
+#begin sspp_characterSoundsP2G2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP2G2.wav
+
+#begin sspp_characterSoundsP2G3.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP2G3.wav
+
+#begin sspp_characterSoundsP2G4.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP2G4.wav
+
+#begin sspp_characterSoundsP2G5.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP2G5.wav
+
+#begin sspp_characterSoundsP2J1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP2J1.wav
+
+#begin sspp_characterSoundsP2J2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP2J2.wav
+
+#begin sspp_characterSoundsP2J3.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP2J3.wav
+
+#begin sspp_characterSoundsP2T1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP2T1.wav
+
+#begin sspp_characterSoundsP2T2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_characterSoundsP2T2.wav
+
+#begin sspp_countDownHigh.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_countDownHigh.wav
+
+#begin sspp_countDownLow.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_countDownLow.wav
+
+#begin sspp_gameover.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_gameover.wav
+
+#begin sspp_gameover2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_gameover2.wav
+
+#begin sspp_gameover3.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_gameover3.wav
+
+#begin sspp_Goal.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_Goal.wav
+
+#begin sspp_GoalPost.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_GoalPost.wav
+
+#begin sspp_menu.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_menu.wav
+
+#begin sspp_pause.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_pause.wav
+
+#begin sspp_splash.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_splash.wav
+
+#begin sspp_whistle.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sspp_whistle.wav
+
