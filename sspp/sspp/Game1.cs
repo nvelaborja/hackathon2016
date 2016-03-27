@@ -17,9 +17,34 @@ namespace sspp
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        #region Textures
+
+        Texture2D texture_goalFront;
+        Texture2D texture_goalBack;
+
+        #endregion
+
         #region Game Logic Members
 
         private bool paused;
+        Vector2 goalPosition1;
+        Vector2 goalPosition2;
+        
+
+        #endregion
+
+        #region Game Objects
+
+        Player player1;
+        Player player2;
+        Overlay overlay;
+        SoundManager sound;
+        Background background;
+        CollisionHandler collisionHandler;
+        Ball ball;
+        Force gravity;
+        List<object> PhysicsObjects;
+        
 
         #endregion
 
@@ -54,6 +79,22 @@ namespace sspp
 
             #endregion
 
+            player1 = new Player(1);
+            player2 = new Player(2);
+            background = new Background();
+            sound = new SoundManager();
+            ball = new Ball();
+
+            goalPosition1 = new Vector2(0, 405);
+            goalPosition2 = new Vector2(1675, 405);
+
+            gravity = new Force(0, -1, 9);
+
+            PhysicsObjects = new List<object>();
+            PhysicsObjects.Add(player1);
+            PhysicsObjects.Add(player2);
+            PhysicsObjects.Add(ball);
+
             base.Initialize();
         }
         
@@ -61,7 +102,16 @@ namespace sspp
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            
+            sound.LoadContent(Content);
+            background.LoadContent(Content);
+            player1.LoadContent(Content);
+            player2.LoadContent(Content);
+            ball.LoadContent(Content);
+
+            texture_goalBack = Content.Load<Texture2D>("goal_back");
+            texture_goalFront = Content.Load<Texture2D>("goal_front");
+
+            sound.LoopMenu();
         }
         
         protected override void UnloadContent()
@@ -71,27 +121,45 @@ namespace sspp
         
         protected override void Update(GameTime gameTime)
         {
-            GamePadState Controller1 = GamePad.GetState(PlayerIndex.One);
-            GamePadState Controller2 = GamePad.GetState(PlayerIndex.Two);
-
             // Take out once we get menu functional
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            if (!Controller1.IsConnected || !Controller2.IsConnected) paused = true;               // If either controller is disconnected, pause the game!
+            ApplyGravity();
 
-
+            player1.Update(gameTime);
+            player2.Update(gameTime);
+            ball.Update(gameTime);
 
             base.Update(gameTime);
         }
         
         protected override void Draw(GameTime gameTime)
         {
+            spriteBatch.Begin();
+
             GraphicsDevice.Clear(Color.White);
 
+            background.Draw(spriteBatch);
+            spriteBatch.Draw(texture_goalBack, goalPosition1, Color.White);
+            spriteBatch.Draw(texture_goalBack, new Rectangle((int)goalPosition2.X, (int)goalPosition2.Y, texture_goalBack.Width, texture_goalBack.Height), null, Color.White, 0f, new Vector2(0, 0), SpriteEffects.FlipHorizontally, 1);
 
-
+            player1.Draw(spriteBatch);
+            player2.Draw(spriteBatch);
+            ball.Draw(spriteBatch);
+            
+            spriteBatch.Draw(texture_goalFront, goalPosition1, Color.White);
+            spriteBatch.Draw(texture_goalFront, new Rectangle((int)goalPosition2.X, (int)goalPosition2.Y, texture_goalFront.Width, texture_goalFront.Height), null, Color.White, 0f, new Vector2(0, 0), SpriteEffects.FlipHorizontally, 1);
             base.Draw(gameTime);
+
+            spriteBatch.End();
+        }
+
+        private void ApplyGravity()
+        {
+            player1.AcceptForce(gravity);
+            player2.AcceptForce(gravity);
+            ball.AcceptForce(gravity);
         }
     }
 }

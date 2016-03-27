@@ -14,14 +14,29 @@ namespace sspp
 {
     class Force
     {
+        private float magnitude;
+        private Vector2 trajectory;
         #region Constructors
 
-        public Force()
+        public Force(int x, int y, float m)
         {
-
+            trajectory = new Vector2(x, y);
+            magnitude = m;
         }
 
         #endregion
+
+        public float Magnitude
+        {
+            get { return magnitude; }
+            set { magnitude = value; }
+        }
+
+        public Vector2 Trajectory
+        {
+            get { return trajectory; }
+            set { trajectory = value; }
+        }
 
         #region MonoGame Functions
 

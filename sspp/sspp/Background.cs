@@ -14,11 +14,14 @@ namespace sspp
 {
     class Background
     {
+        Texture2D texture;
+        Vector2 position;
+
         #region Constructors
 
         public Background()
         {
-
+            Initialize();
         }
 
         #endregion
@@ -27,14 +30,12 @@ namespace sspp
 
         protected void Initialize()
         {
-
-
+            position = new Vector2(0, 0);
         }
 
-        protected void LoadContent(ContentManager Content)
+        public void LoadContent(ContentManager Content)
         {
-
-
+            texture = Content.Load<Texture2D>("field");
         }
 
         protected void UnloadContent(ContentManager Content)
@@ -42,14 +43,14 @@ namespace sspp
 
         }
 
-        protected void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
 
         }
 
-        protected void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
-
+            spriteBatch.Draw(texture, position, Color.White);
         }
 
         #endregion
