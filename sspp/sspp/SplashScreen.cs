@@ -19,7 +19,7 @@ namespace sspp
         SpriteBatch spriteBatch;
         SoundManager sound;
         private Texture2D title;
-        private Texture2D backGround;
+        private Texture2D background;
         private Vector2 zeroPosition;
         private bool done;
         private double time;
@@ -70,10 +70,16 @@ namespace sspp
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // Load Splash screen images here
+            spriteBatch.Begin();
+
+            title = Content.Load<Texture2D>("splash");
+            background = Content.Load<Texture2D>("black");
 
             zeroPosition = new Vector2(0, 0);
 
             IsMouseVisible = false;
+
+            spriteBatch.End();
         }
 
 
@@ -88,8 +94,11 @@ namespace sspp
             if (done)
             {
                 UnloadContent();
-                
+
                 // Load and run menu / game
+
+                using (var game = new Game1())
+                    game.Run();
 
                 splashed = true;
                 Exit();
@@ -117,19 +126,19 @@ namespace sspp
             base.Update(gameTime);
         }
 
-        protected override void Draw(GameTime gameTime)                                 // Actually draws elements onto the window so we can see them
+        protected override void Draw(GameTime gameTime)                                
         {
             GraphicsDevice.Clear(Color.Gray);                                           // Clears window every frame with Gray background
 
             spriteBatch.Begin();                                                        // Starts spritebatch, the object that contains all the drawing functions
 
-            //spriteBatch.Draw(/* Background */, zeroPosition, new Color(255, 255, 255, (byte)MathHelper.Clamp(mAlphaValue, 0, 255)));
+            spriteBatch.Draw(background, zeroPosition, new Color(255, 255, 255, (byte)MathHelper.Clamp(mAlphaValue, 0, 255)));
 
-            //spriteBatch.Draw(/* Title  */, zeroPosition, Color.White);
+            spriteBatch.Draw(title, new Vector2(200, 100), Color.White);
 
-            spriteBatch.End();                                                          // Must end the spritebatch after each frame (not sure why)
+            spriteBatch.End();                                                          // Must end the spritebatch after each frame 
 
-            base.Draw(gameTime);                                                        // TBH, no idea what this does
+            base.Draw(gameTime);                                                        
         }
     }
 }
