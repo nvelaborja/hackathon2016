@@ -95,14 +95,14 @@ namespace sspp
 
             //if (!Controller.IsConnected) paused = true;                                             // If either controller is disconnected, pause the game!
 
-            
+            Force movement = new Force(0, 0, 0);
 
             if (Controller.ThumbSticks.Left.X != 0)
             {
                 int Xdir = 0;
                 if (Controller.ThumbSticks.Left.X > 0) Xdir = 1;
                 else Xdir = -1;
-                Force movement = new Force(Xdir, 0, (int)(Controller.ThumbSticks.Left.X * 100 / movementDamp));
+                movement = new Force(Xdir, 0, (int)(Controller.ThumbSticks.Left.X * 100 / movementDamp));
                 //UpdatePositionX((int)(Controller.ThumbSticks.Left.X * 100 / movementDamp));
                 //Physics.Velocity = Controller.ThumbSticks.Left.X * 100 / movementDamp;
                 physics.AcceptForce(movement);

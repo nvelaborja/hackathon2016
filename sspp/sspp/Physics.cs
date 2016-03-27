@@ -163,6 +163,14 @@ namespace sspp
 
             mag = (float)Math.Sqrt(x * x + y * y);
 
+            if (mag == 0)
+            {
+                unitVector.X = 0;
+                unitVector.Y = 0;
+
+                return unitVector;
+            }
+
             unitVector.X = x / mag;
             unitVector.Y = y / mag;
 

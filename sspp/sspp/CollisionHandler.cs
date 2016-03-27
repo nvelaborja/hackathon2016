@@ -89,7 +89,7 @@ namespace sspp
 
         private void BallHit(Player hitter)
         {
-            
+            ball.AcceptForce(hitter.physics.ApplyForce());
         }
 
         #endregion

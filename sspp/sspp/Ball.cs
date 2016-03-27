@@ -32,7 +32,7 @@ namespace sspp
             position = defaultPosition;
             center = new Vector2(position.X + texture.Width / 2, position.Y + texture.Width / 2);
             radius = texture.Width / 2 - 2;
-            physics = new Physics(4, this);
+            physics = new Physics(23, this);
         }
 
         public override void LoadContent(ContentManager Content)
@@ -51,9 +51,13 @@ namespace sspp
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+
             physics.Update(gameTime);
 
             position = physics.GetNewPosition(position);
+            
+            center.X = position.X + texture.Width / 2;
+            center.Y = position.Y + texture.Height;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

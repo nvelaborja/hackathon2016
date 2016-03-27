@@ -26,7 +26,7 @@ namespace sspp
         #region Game Logic Members
 
         private bool paused;
-        
+        private bool menu;
 
         #endregion
 
@@ -41,7 +41,19 @@ namespace sspp
         Ball ball;
         Force gravity;
         List<object> PhysicsObjects;
-        
+
+
+        #endregion
+
+        #region Menu Objects
+
+        Texture2D mainMenu;
+        Texture2D pauseMenu;
+        Texture2D highligher;
+        Vector2 playPos;
+        Vector2 exitPos;
+        int menuSelector = 1;
+        int buttonCoolDown = 0;
 
         #endregion
 
@@ -64,8 +76,6 @@ namespace sspp
             Window.Position = new Point(2560 / 2 - 1920 / 2, 1440 / 2 - 720 / 2);       // Center screen, will need to change for non-1440p monitors
 
             #endregion
-            
-            
         }
 
         protected override void Initialize()
@@ -73,6 +83,7 @@ namespace sspp
             #region Game Logic Initialization
 
             paused = false;
+            menu = true;
 
             #endregion
 
@@ -92,6 +103,9 @@ namespace sspp
 
             collisionHandler = new CollisionHandler(ref player1, ref player2, ref ball);
 
+            playPos = new Vector2(550, 300);
+            exitPos = new Vector2(550, 400);
+
             base.Initialize();
         }
         
@@ -108,6 +122,9 @@ namespace sspp
             collisionHandler.LoadContent(Content);
 
             texture_goalFront = Content.Load<Texture2D>("goal_front");
+            mainMenu = Content.Load<Texture2D>("menu");
+            pauseMenu = Content.Load<Texture2D>("pause");
+            highligher = Content.Load<Texture2D>("highlight");
 
             sound.LoopMenu();
         }
@@ -119,18 +136,59 @@ namespace sspp
         
         protected override void Update(GameTime gameTime)
         {
-            // Take out once we get menu functional
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            if (menu || paused)
+            {
+                GamePadState Controller1 = GamePad.GetState(PlayerIndex.One);
+                GamePadState Controller2 = GamePad.GetState(PlayerIndex.Two);
 
-            ApplyGravity();
+                if (Controller1.ThumbSticks.Left.Y == 1 || Controller2.ThumbSticks.Left.Y == 1)
+                {
+                    if (menuSelector == 2)
+                    {
+                        menuSelector = 1;
+                        sound.playButtonHover();
+                    }
+                }
+                else if (Controller1.ThumbSticks.Left.Y == -1 || Controller2.ThumbSticks.Left.Y == -1)
+                {
+                    if (menuSelector == 1)
+                    {
+                        menuSelector = 2;
+                        sound.playButtonHover();
+                    }
+                }
 
-            player1.Update(gameTime);
-            player2.Update(gameTime);
-            ball.Update(gameTime);
+                if (Controller1.IsButtonDown(Buttons.A) || Controller2.IsButtonDown(Buttons.A))
+                {
+                    if (buttonCoolDown < 0)
+                    {
+                        buttonCoolDown = 60;
+                        sound.playButtonClick();
+                        Select();
+                    }
+                    
+                }
+                buttonCoolDown--;
+            }
+            else
+            {
+                GamePadState Controller1 = GamePad.GetState(PlayerIndex.One);
+                GamePadState Controller2 = GamePad.GetState(PlayerIndex.Two);
 
-            collisionHandler.Update(gameTime);
+                if (Controller1.IsButtonDown(Buttons.Start) || Controller2.IsButtonDown(Buttons.Start))
+                {
+                    sound.playButtonClick();
+                    paused = true;
+                }
 
+                ApplyGravity();
+
+                player1.Update(gameTime);
+                player2.Update(gameTime);
+                ball.Update(gameTime);
+
+                collisionHandler.Update(gameTime);
+            }
             base.Update(gameTime);
         }
         
@@ -150,6 +208,20 @@ namespace sspp
 
             overlay.Draw(spriteBatch);
 
+            if (menu)
+            {
+                if (menuSelector == 1) spriteBatch.Draw(highligher, playPos, Color.White);
+                else if (menuSelector == 2) spriteBatch.Draw(highligher, exitPos, Color.White);
+                spriteBatch.Draw(mainMenu, new Vector2(0, 0), Color.White);
+            }
+
+            if (paused)
+            {
+                if (menuSelector == 1) spriteBatch.Draw(highligher, playPos, Color.White);
+                else if (menuSelector == 2) spriteBatch.Draw(highligher, exitPos, Color.White);
+                spriteBatch.Draw(pauseMenu, new Vector2(0, 0), Color.White);
+            }
+
             base.Draw(gameTime);
 
             spriteBatch.End();
@@ -160,6 +232,35 @@ namespace sspp
             player1.AcceptForce(gravity);
             player2.AcceptForce(gravity);
             ball.AcceptForce(gravity);
+        }
+
+        private void Select()
+        {
+            if (menu)
+            {
+                if (menuSelector == 1)
+                {
+                    menu = false;
+                }
+                else if (menuSelector == 2)
+                {
+                    System.Threading.Thread.Sleep(3500);
+                    Exit();
+                }
+            }
+
+            if (paused)
+            {
+                if (menuSelector == 1)
+                {
+                    paused = false;
+                }
+                else if (menuSelector == 2)
+                {
+                    paused = false;
+                    menu = true;
+                }
+            }
         }
     }
 }
