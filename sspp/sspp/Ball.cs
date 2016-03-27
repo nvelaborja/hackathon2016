@@ -30,6 +30,16 @@ namespace sspp
 
         #endregion
 
+        public int Radius
+        {
+            get { return radius; }
+        }
+
+        public Vector2 Center
+        {
+            get { return center; }
+        }
+
         #region MonoGame Functions
 
         protected void Initialize()
@@ -56,7 +66,9 @@ namespace sspp
 
         public void Update(GameTime gameTime)
         {
+            phyics.Update(gameTime, ref position);
 
+            position = phyics.GetNewPosition(position);
         }
 
         public void Draw(SpriteBatch spriteBatch)

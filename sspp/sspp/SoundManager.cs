@@ -37,56 +37,9 @@ namespace sspp
 
         public SoundManager()
         {
-            #region Setup Random Sound Lists
 
-            ballSounds = new List<SoundEffect>();
-            Player1Grunts = new List<SoundEffect>();
-            Player1Jumps = new List<SoundEffect>();
-            Player1Taunts = new List<SoundEffect>();
-            Player2Grunts = new List<SoundEffect>();
-            Player2Jumps = new List<SoundEffect>();
-            Player2Taunts = new List<SoundEffect>();
-
-            // Balls sounds
-            ballSounds.Add(ball1);
-            ballSounds.Add(ball2);
-            ballSounds.Add(ball3);
-            ballSounds.Add(ball4);
-            ballSounds.Add(ball5);
-
-            // Player 1 Grunts
-            Player1Grunts.Add(P1G1);
-            Player1Grunts.Add(P1G2);
-            Player1Grunts.Add(P1G3);
-            Player1Grunts.Add(P1G4);
-            Player1Grunts.Add(P1G5);
-
-            // Player 1 Jumps
-            Player1Jumps.Add(P1J1);
-            Player1Jumps.Add(P1J2);
-            Player1Jumps.Add(P1J3);
-
-            // Player 1 Taunts
-            Player1Taunts.Add(P1T1);
-            Player1Taunts.Add(P1T2);
-
-            // Player 2 Grunts
-            Player2Grunts.Add(P2G1);
-            Player2Grunts.Add(P2G2);
-            Player2Grunts.Add(P2G3);
-            Player2Grunts.Add(P2G4);
-            Player2Grunts.Add(P2G5);
-
-            // Player 2 Jumps
-            Player2Jumps.Add(P2J1);
-            Player2Jumps.Add(P2J2);
-            Player2Jumps.Add(P2J3);
-
-            // Player 2 Taunts
-            Player2Taunts.Add(P2T1);
-            Player2Taunts.Add(P2T2);
-
-            #endregion
+            rng = new Random();
+            
         }
 
         #endregion
@@ -146,6 +99,57 @@ namespace sspp
             P2J3 = Content.Load<SoundEffect>("sspp_characterSoundsP2J3");
             P2T1 = Content.Load<SoundEffect>("sspp_characterSoundsP2T1");
             P2T2 = Content.Load<SoundEffect>("sspp_characterSoundsP2T2");
+
+            #endregion
+
+            #region Setup Random Sound Lists
+
+            ballSounds = new List<SoundEffect>();
+            Player1Grunts = new List<SoundEffect>();
+            Player1Jumps = new List<SoundEffect>();
+            Player1Taunts = new List<SoundEffect>();
+            Player2Grunts = new List<SoundEffect>();
+            Player2Jumps = new List<SoundEffect>();
+            Player2Taunts = new List<SoundEffect>();
+
+            // Balls sounds
+            ballSounds.Add(ball1);
+            ballSounds.Add(ball2);
+            ballSounds.Add(ball3);
+            ballSounds.Add(ball4);
+            ballSounds.Add(ball5);
+
+            // Player 1 Grunts
+            Player1Grunts.Add(P1G1);
+            Player1Grunts.Add(P1G2);
+            Player1Grunts.Add(P1G3);
+            Player1Grunts.Add(P1G4);
+            Player1Grunts.Add(P1G5);
+
+            // Player 1 Jumps
+            Player1Jumps.Add(P1J1);
+            Player1Jumps.Add(P1J2);
+            Player1Jumps.Add(P1J3);
+
+            // Player 1 Taunts
+            Player1Taunts.Add(P1T1);
+            Player1Taunts.Add(P1T2);
+
+            // Player 2 Grunts
+            Player2Grunts.Add(P2G1);
+            Player2Grunts.Add(P2G2);
+            Player2Grunts.Add(P2G3);
+            Player2Grunts.Add(P2G4);
+            Player2Grunts.Add(P2G5);
+
+            // Player 2 Jumps
+            Player2Jumps.Add(P2J1);
+            Player2Jumps.Add(P2J2);
+            Player2Jumps.Add(P2J3);
+
+            // Player 2 Taunts
+            Player2Taunts.Add(P2T1);
+            Player2Taunts.Add(P2T2);
 
             #endregion
         }
@@ -221,18 +225,17 @@ namespace sspp
         public void playJump(int playerNum)                                                                 // Plays random jump sound from specified player (1 or 2)
         {
             int ri = rng.Next(1, 3);
-            SoundEffectInstance instance;
 
             if (playerNum == 1)
             {
-                instance = Player1Jumps[ri - 1].CreateInstance();
+                SoundEffectInstance instance = Player1Jumps[ri - 1].CreateInstance();
                 instance.IsLooped = false;
                 instance.Play();
                 return;
             }
             else if (playerNum == 2)
             {
-                instance = Player2Jumps[ri - 1].CreateInstance();
+                SoundEffectInstance instance = Player2Jumps[ri - 1].CreateInstance();
                 instance.IsLooped = false;
                 instance.Play();
             }
@@ -241,19 +244,20 @@ namespace sspp
         public void playGrunt(int playerNum)                                                                // Plays random grunt sound from specified player (1 or 2)
         {
             int ri = rng.Next(1, 5);
-            SoundEffectInstance instance;
 
             if (playerNum == 1)
             {
-                instance = Player1Grunts[ri - 1].CreateInstance();
+                SoundEffectInstance instance = Player1Grunts[ri - 1].CreateInstance();
                 instance.IsLooped = false;
+                instance.Volume = 0.3f;
                 instance.Play();
                 return;
             }
             else if (playerNum == 2)
             {
-                instance = Player2Grunts[ri - 1].CreateInstance();
+                SoundEffectInstance instance = Player2Grunts[ri - 1].CreateInstance();
                 instance.IsLooped = false;
+                instance.Volume = 0.3f;
                 instance.Play();
             }
         }
@@ -261,18 +265,17 @@ namespace sspp
         public void playTaunt(int playerNum)                                                                // Plays random grunt sound from specified player (1 or 2)
         {
             int ri = rng.Next(1, 2);
-            SoundEffectInstance instance;
 
             if (playerNum == 1)
             {
-                instance = Player1Grunts[ri - 1].CreateInstance();
+                SoundEffectInstance instance = Player1Grunts[ri - 1].CreateInstance();
                 instance.IsLooped = false;
                 instance.Play();
                 return;
             }
             else if (playerNum == 2)
             {
-                instance = Player2Grunts[ri - 1].CreateInstance();
+                SoundEffectInstance instance = Player2Grunts[ri - 1].CreateInstance();
                 instance.IsLooped = false;
                 instance.Play();
             }

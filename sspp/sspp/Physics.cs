@@ -18,9 +18,10 @@ namespace sspp
         private float velocity;
         private Vector2 trajectory;
         private Force force;
-        public const int ground = 620;
+        public const int ground = 500;
         private const int velocityDecay = 10;
         private Vector2 prevPosition;
+        private int movementDamp = 100;
 
         #region Constructors
 
@@ -28,6 +29,7 @@ namespace sspp
         {
             mass = Mass;
             prevPosition = Position;
+            Initialize();
         }
 
         #endregion
@@ -37,13 +39,19 @@ namespace sspp
             get { return ground; }
         }
 
+        public float Velocity
+        {
+            get { return velocity; }
+        }
+
         #region MonoGame Functions
 
-        protected void Initialize(float mass)
+        protected void Initialize()
         {
             velocity = 0;
             trajectory = new Vector2();
             force = new Force((int)trajectory.X, (int)trajectory.Y, mass);
+            
         }
 
         protected void LoadContent(ContentManager Content)
@@ -57,9 +65,9 @@ namespace sspp
 
         }
 
-        protected void Update(GameTime gameTime, ref Vector2 position)
+        public void Update(GameTime gameTime, ref Vector2 position)
         {
-            velocity -= velocityDecay;
+            velocity = (float) Math.Sqrt((double)((Math.Pow(MathHelper.Distance(position.X, prevPosition.X), 2) + Math.Pow(MathHelper.Distance(position.Y, prevPosition.Y), 2))));
 
             trajectory.X = position.X - prevPosition.X;
             trajectory.Y = position.Y - prevPosition.Y;
@@ -68,11 +76,6 @@ namespace sspp
             force.Trajectory = trajectory;
 
             prevPosition = position;         
-        }
-
-        protected void Draw(SpriteBatch spriteBatch)
-        {
-
         }
 
         #endregion
@@ -98,7 +101,8 @@ namespace sspp
         {
             Vector2 newPosition = Position;
 
-            
+            newPosition.X += velocity * trajectory.X / movementDamp;
+            newPosition.Y += velocity * trajectory.Y / movementDamp;
 
             return newPosition;
         }
