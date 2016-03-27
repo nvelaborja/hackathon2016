@@ -51,7 +51,7 @@ namespace sspp
             zeroPoint = new Point(0, 0);
             movementDamp = 6;
             goalBuffer = 100;
-            phyics = new Physics(23, this);
+            physics = new Physics(23, this);
             center = new Vector2(texture.Width / 2, texture.Height);
             radius = 50;
 
@@ -100,7 +100,7 @@ namespace sspp
                 Force movement = new Force(Xdir, 0, (int)(Controller.ThumbSticks.Left.X * 100 / movementDamp));
                 //UpdatePositionX((int)(Controller.ThumbSticks.Left.X * 100 / movementDamp));
                 //Physics.Velocity = Controller.ThumbSticks.Left.X * 100 / movementDamp;
-                phyics.AcceptForce(movement);
+                physics.AcceptForce(movement);
                 position = Physics.GetNewPosition(Position);
                 //phyics.AcceptForce(new Force(-(int)(Controller.ThumbSticks.Left.X * 100 / movementDamp), 0, 1));
             }
@@ -109,7 +109,7 @@ namespace sspp
             if (position.X < 0 + goalBuffer) position.X = goalBuffer;
             else if (position.X > 1920 - texture.Width - goalBuffer) position.X = 1920 - texture.Width - goalBuffer;
 
-            phyics.Update(gameTime);
+            physics.Update(gameTime);
 
             top.X = position.X + texture.Width / 2;
             top.Y = position.Y + texture.Height / 2;
@@ -142,9 +142,9 @@ namespace sspp
         {
             Force jumpForce = new Force(0, -1, 25);
 
-            if (position.Y == phyics.Ground)                  // Only can jump if on the ground
+            if (position.Y == physics.Ground)                  // Only can jump if on the ground
             {
-                phyics.AcceptForce(jumpForce);
+                physics.AcceptForce(jumpForce);
 
             }
         }
@@ -159,7 +159,7 @@ namespace sspp
         public override void UpdatePositionY(int d)
         {
             position.Y += d;
-            if (position.Y < phyics.Ground) position.Y = phyics.Ground;
+            if (position.Y < physics.Ground) position.Y = physics.Ground;
         }
         
         #endregion

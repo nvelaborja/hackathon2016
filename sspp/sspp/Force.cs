@@ -20,8 +20,8 @@ namespace sspp
 
         public Force(int x, int y, float m)
         {
-            trajectory = new Vector2(x, y);
-            magnitude = m;
+            trajectory = UnitVector(x, y);
+            Magnitude = m;
         }
 
         #endregion
@@ -29,13 +29,21 @@ namespace sspp
         public float Magnitude
         {
             get { return magnitude; }
-            set { magnitude = value; }
+            set
+            {
+                magnitude = value;
+                if (magnitude < 0) magnitude = -magnitude;
+            }
         }
 
         public Vector2 Trajectory
         {
             get { return trajectory; }
-            set { trajectory = value; }
+            set
+            {
+                trajectory = value;
+                trajectory = UnitVector((int)trajectory.X, (int)trajectory.Y);
+            }
         }
         
 
@@ -78,7 +86,18 @@ namespace sspp
 
         #region Helper Functions
 
+        private Vector2 UnitVector(int x, int y)
+        {
+            Vector2 unitVector = new Vector2();
+            float mag = 0f;
 
+            mag = (float)Math.Sqrt(x * x + y * y);
+
+            unitVector.X = x / mag;
+            unitVector.Y = y / mag;
+
+            return unitVector;
+        }
 
         #endregion
     }

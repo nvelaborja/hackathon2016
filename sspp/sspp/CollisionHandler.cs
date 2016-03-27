@@ -61,7 +61,7 @@ namespace sspp
             else if (DistanceFormulaVector2(player1.Center, player2.Center) < player1.Radius + player2.Radius)
             {
                 playerCollide = true;
-                if (player1.Physics.Velocity > player2.Physics.Velocity)
+                if (player1.Physics.VelocityX > player2.Physics.VelocityX)
                     sounds.playGrunt(2);
                 else sounds.playGrunt(1);
             }

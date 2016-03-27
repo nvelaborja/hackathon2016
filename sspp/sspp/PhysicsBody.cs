@@ -17,7 +17,7 @@ namespace sspp
         internal Texture2D texture;
         internal Vector2 position;
         public Vector2 defaultPosition;
-        internal Physics phyics;
+        internal Physics physics;
         internal Vector2 center;                               // How much smaller hitbox is than texture
         internal int radius;
 
@@ -31,7 +31,7 @@ namespace sspp
 
         public Physics Physics
         {
-            get { return phyics; }
+            get { return physics; }
         }
 
         public int Radius
@@ -53,7 +53,7 @@ namespace sspp
 
         protected virtual void Initialize()
         {
-
+            
         }
 
         public virtual void LoadContent(ContentManager Content)
@@ -68,7 +68,7 @@ namespace sspp
 
         public virtual void Update(GameTime gameTime)
         {
-            if (position.Y > Physics.Ground) position.Y = phyics.Ground;
+            if (position.Y > Physics.Ground) position.Y = physics.Ground;
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)
@@ -90,7 +90,7 @@ namespace sspp
 
         public void AcceptForce(Force force)
         {
-            phyics.AcceptForce(force);
+            physics.AcceptForce(force);
         }
 
         #endregion

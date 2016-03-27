@@ -15,7 +15,8 @@ namespace sspp
     class Physics
     {
         private float mass;
-        private float velocity;
+        private float velocityX;
+        private float velocityY;
         private float maxVelocity;
         private float minVelocity;
         private Vector2 trajectory;
@@ -43,21 +44,28 @@ namespace sspp
             get { return ground; }
         }
 
-        public float Velocity
+        public float VelocityX
         {
-            get { return velocity; }
-            set { velocity = value; }
+            get { return velocityX; }
+            set { velocityX = value; }
+        }
+
+        public float VelocityY
+        {
+            get { return velocityY; }
+            set { velocityY = value; }
         }
 
         #region MonoGame Functions
 
         protected void Initialize()
         {
-            velocity = 0;
+            velocityX = 0;
+            velocityY = 0;
             trajectory = new Vector2();
             force = new Force((int)trajectory.X, (int)trajectory.Y, mass);
-            maxVelocity = 16;
-            minVelocity = -16;
+            maxVelocity = 30;
+            minVelocity = -30;
         }
 
         protected void LoadContent(ContentManager Content)
@@ -74,13 +82,17 @@ namespace sspp
         {
             //velocity = (float) Math.Sqrt((double)((Math.Pow(MathHelper.Distance(physicsBody.Position.X, prevPosition.X), 2) + Math.Pow(MathHelper.Distance(physicsBody.Position.Y, prevPosition.Y), 2))));
             DecrementVelocity();
-            if (velocity > maxVelocity) velocity = maxVelocity;
-            else if (velocity < minVelocity) velocity = minVelocity;
+            if (velocityX > maxVelocity) velocityX = maxVelocity;
+            else if (velocityX < minVelocity) velocityX = minVelocity;
+            if (velocityY > maxVelocity) velocityY = maxVelocity;
+            else if (velocityY < minVelocity) velocityY = minVelocity;
 
             trajectory.X = physicsBody.Position.X - prevPosition.X;
             trajectory.Y = physicsBody.Position.Y - prevPosition.Y;
 
-            force.Magnitude = mass * velocity;
+            trajectory = UnitVector((int)(physicsBody.Position.X - prevPosition.X), (int)(physicsBody.Position.Y - prevPosition.Y));
+
+            force.Magnitude = (float) Math.Sqrt(velocityX * velocityX + velocityY * velocityY);
             force.Trajectory = trajectory;
 
             prevPosition = physicsBody.Position;         
@@ -99,16 +111,18 @@ namespace sspp
 
         public void AcceptForce(Force force)
         {
-            velocity += force.Magnitude;
+            velocityX += force.Magnitude * force.Trajectory.X;
+            velocityY += force.Magnitude * force.Trajectory.Y;
             trajectory += force.Trajectory;
+            trajectory = UnitVector((int)trajectory.X, (int)trajectory.Y);
         }
 
         public Vector2 GetNewPosition(Vector2 Position)
         {
             Vector2 newPosition = Position;
 
-            newPosition.X += velocity * trajectory.X / movementDamp;
-            newPosition.Y += velocity * trajectory.Y / movementDamp;
+            newPosition.X += velocityX * mass / movementDamp;
+            newPosition.Y += velocityY * mass / movementDamp;
 
             return newPosition;
         }
@@ -119,16 +133,40 @@ namespace sspp
 
         private void DecrementVelocity()
         {
-            if (velocity > 0)
+            if (velocityX > 0)
             {
-                velocity--;
-                if (velocity < 0) velocity = 0;
+                velocityX--;
+                if (velocityX < 0) velocityX = 0;
             }
-            else if (velocity < 0)
+            else if (velocityX < 0)
             {
-                velocity++;
-                if (velocity > 0) velocity = 0;
+                velocityX++;
+                if (velocityX > 0) velocityX = 0;
             }
+
+            if (velocityY > 0)
+            {
+                velocityY--;
+                if (velocityY < 0) velocityY = 0;
+            }
+            else if (velocityY < 0)
+            {
+                velocityY++;
+                if (velocityY > 0) velocityY = 0;
+            }
+        }
+
+        private Vector2 UnitVector(int x, int y)
+        {
+            Vector2 unitVector = new Vector2();
+            float mag = 0f;
+
+            mag = (float)Math.Sqrt(x * x + y * y);
+
+            unitVector.X = x / mag;
+            unitVector.Y = y / mag;
+
+            return unitVector;
         }
         #endregion
     }
