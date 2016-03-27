@@ -83,7 +83,7 @@ namespace sspp
             ball = new Ball();
             overlay = new Overlay();
 
-            gravity = new Force(0, 1, 60);
+            gravity = new Force(0, 1, 4);
 
             PhysicsObjects = new List<object>();
             PhysicsObjects.Add(player1);

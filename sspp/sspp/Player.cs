@@ -20,6 +20,7 @@ namespace sspp
         private int movementDamp;                                           // Multiplier for control stick movement
         private int goalBuffer;
         private int jumpCoolDown;
+        private SoundManager sounds;
 
         #region Constructors
 
@@ -54,6 +55,7 @@ namespace sspp
             physics = new Physics(23, this);
             center = new Vector2(texture.Width / 2, texture.Height);
             radius = 50;
+            sounds = new SoundManager();
 
             // Initialize phyics
 
@@ -72,7 +74,10 @@ namespace sspp
                 default:
                     break;
             }
+
             this.Initialize();
+
+            sounds.LoadContent(Content);
         }
 
         public override void UnloadContent(ContentManager Content)
@@ -140,13 +145,15 @@ namespace sspp
 
         private void Jump()
         {
-            Force jumpForce = new Force(0, -1, 25);
+            Force jumpForce = new Force(0, -1, 400);
 
             if (position.Y == physics.Ground)                  // Only can jump if on the ground
             {
                 physics.AcceptForce(jumpForce);
-
+                sounds.playJump(playerNum);
             }
+
+            //position.Y -= 100;
         }
 
         public override void UpdatePositionX(int d)
