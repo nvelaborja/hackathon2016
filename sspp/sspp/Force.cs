@@ -37,6 +37,7 @@ namespace sspp
             get { return trajectory; }
             set { trajectory = value; }
         }
+        
 
         #region MonoGame Functions
 

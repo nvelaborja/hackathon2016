@@ -20,15 +20,12 @@ namespace sspp
         #region Textures
 
         Texture2D texture_goalFront;
-        Texture2D texture_goalBack;
 
         #endregion
 
         #region Game Logic Members
 
         private bool paused;
-        Vector2 goalPosition1;
-        Vector2 goalPosition2;
         
 
         #endregion
@@ -84,9 +81,7 @@ namespace sspp
             background = new Background();
             sound = new SoundManager();
             ball = new Ball();
-
-            goalPosition1 = new Vector2(0, 405);
-            goalPosition2 = new Vector2(1675, 405);
+            overlay = new Overlay();
 
             gravity = new Force(0, -1, 9);
 
@@ -94,6 +89,8 @@ namespace sspp
             PhysicsObjects.Add(player1);
             PhysicsObjects.Add(player2);
             PhysicsObjects.Add(ball);
+
+            collisionHandler = new CollisionHandler(ref player1, ref player2, ref ball);
 
             base.Initialize();
         }
@@ -104,11 +101,12 @@ namespace sspp
 
             sound.LoadContent(Content);
             background.LoadContent(Content);
+            overlay.LoadContent(Content);
             player1.LoadContent(Content);
             player2.LoadContent(Content);
             ball.LoadContent(Content);
+            collisionHandler.LoadContent(Content);
 
-            texture_goalBack = Content.Load<Texture2D>("goal_back");
             texture_goalFront = Content.Load<Texture2D>("goal_front");
 
             sound.LoopMenu();
@@ -131,6 +129,8 @@ namespace sspp
             player2.Update(gameTime);
             ball.Update(gameTime);
 
+            collisionHandler.Update(gameTime);
+
             base.Update(gameTime);
         }
         
@@ -141,15 +141,15 @@ namespace sspp
             GraphicsDevice.Clear(Color.White);
 
             background.Draw(spriteBatch);
-            spriteBatch.Draw(texture_goalBack, goalPosition1, Color.White);
-            spriteBatch.Draw(texture_goalBack, new Rectangle((int)goalPosition2.X, (int)goalPosition2.Y, texture_goalBack.Width, texture_goalBack.Height), null, Color.White, 0f, new Vector2(0, 0), SpriteEffects.FlipHorizontally, 1);
 
             player1.Draw(spriteBatch);
             player2.Draw(spriteBatch);
             ball.Draw(spriteBatch);
             
-            spriteBatch.Draw(texture_goalFront, goalPosition1, Color.White);
-            spriteBatch.Draw(texture_goalFront, new Rectangle((int)goalPosition2.X, (int)goalPosition2.Y, texture_goalFront.Width, texture_goalFront.Height), null, Color.White, 0f, new Vector2(0, 0), SpriteEffects.FlipHorizontally, 1);
+            spriteBatch.Draw(texture_goalFront, new Vector2(0,0), Color.White);
+
+            overlay.Draw(spriteBatch);
+
             base.Draw(gameTime);
 
             spriteBatch.End();

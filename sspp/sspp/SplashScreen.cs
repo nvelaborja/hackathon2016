@@ -105,7 +105,7 @@ namespace sspp
             }
 
             time += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (time > 6000)
+            if (time > 1000)
             {
                 done = true;
             }
