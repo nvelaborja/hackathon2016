@@ -12,21 +12,14 @@ using Microsoft.Xna.Framework.Media;
 
 namespace sspp
 {
-    class Player
+    class Player : PhysicsBody
     {
         private int playerNum;
-        private Texture2D texture;
-        private Vector2 position;
-        //private Vector2 positionHitbox;
-        public Vector2 defaultPosition;
-        private Physics phyics;
         private Vector2 top;
-        private Vector2 center;
-        //private int hitboxBuff;                                             // How much smaller hitbox is than texture
         private Point zeroPoint;                                            // For use with control sticks
         private int movementDamp;                                           // Multiplier for control stick movement
         private int goalBuffer;
-        private int radius;
+        private int jumpCoolDown;
 
         #region Constructors
 
@@ -37,24 +30,9 @@ namespace sspp
 
         #endregion
         
-        public Physics Physics
-        {
-            get { return phyics; }
-        }
-
-        public int Radius
-        {
-            get { return radius; }
-        }
-
-        public Vector2 Center
-        {
-            get { return center; }
-        }
-
         #region MonoGame Functions
 
-        protected void Initialize()
+        protected override void Initialize()
         {
             switch (playerNum)
             {
@@ -70,21 +48,18 @@ namespace sspp
 
             position = defaultPosition;
             top = new Vector2(position.X + texture.Width / 2, position.Y + texture.Width / 2);
-            //hitboxBuff = 10;
-            //positionHitbox = new Vector2(position.X + hitboxBuff / 2, position.Y + hitboxBuff / 2);
-            //hitbox = new Rectangle((int) positionHitbox.X, (int) positionHitbox.Y, texture.Width - hitboxBuff, texture.Height - hitboxBuff);
             zeroPoint = new Point(0, 0);
-            movementDamp = 4;
+            movementDamp = 6;
             goalBuffer = 100;
-            phyics = new Physics(23, position);
+            phyics = new Physics(23, this);
             center = new Vector2(texture.Width / 2, texture.Height);
             radius = 50;
 
             // Initialize phyics
 
         }
-        
-        public void LoadContent(ContentManager Content)
+
+        public override void LoadContent(ContentManager Content)
         {
             switch (playerNum)
             {
@@ -97,31 +72,44 @@ namespace sspp
                 default:
                     break;
             }
-            Initialize();
+            this.Initialize();
         }
 
-        public void UnloadContent(ContentManager Content)
+        public override void UnloadContent(ContentManager Content)
         {
             
         }
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             GamePadState Controller = new GamePadState();                                           // Assign controller based on player number
-            if (playerNum == 1) Controller = GamePad.GetState(PlayerIndex.One);
-            else if (playerNum == 2) Controller = GamePad.GetState(PlayerIndex.Two);
+            if (playerNum == 1)
+                Controller = GamePad.GetState(PlayerIndex.One);
+            else if (playerNum == 2)
+                Controller = GamePad.GetState(PlayerIndex.Two);
 
             //if (!Controller.IsConnected) paused = true;                                             // If either controller is disconnected, pause the game!
 
-            phyics.Update(gameTime, ref position);
+            
 
             if (Controller.ThumbSticks.Left.X != 0)
             {
-                UpdatePositionX((int)(Controller.ThumbSticks.Left.X * 100 / movementDamp));
+                int Xdir = 0;
+                if (Controller.ThumbSticks.Left.X > 0) Xdir = 1;
+                else Xdir = -1;
+                Force movement = new Force(Xdir, 0, (int)(Controller.ThumbSticks.Left.X * 100 / movementDamp));
+                //UpdatePositionX((int)(Controller.ThumbSticks.Left.X * 100 / movementDamp));
+                //Physics.Velocity = Controller.ThumbSticks.Left.X * 100 / movementDamp;
+                phyics.AcceptForce(movement);
+                position = Physics.GetNewPosition(Position);
                 //phyics.AcceptForce(new Force(-(int)(Controller.ThumbSticks.Left.X * 100 / movementDamp), 0, 1));
             }
+            base.Update(gameTime);
 
-            //position = phyics.GetNewPosition(position);
+            if (position.X < 0 + goalBuffer) position.X = goalBuffer;
+            else if (position.X > 1920 - texture.Width - goalBuffer) position.X = 1920 - texture.Width - goalBuffer;
+
+            phyics.Update(gameTime);
 
             top.X = position.X + texture.Width / 2;
             top.Y = position.Y + texture.Height / 2;
@@ -129,16 +117,19 @@ namespace sspp
             center.X = position.X + texture.Width / 2;
             center.Y = position.Y + texture.Height;
 
-            //positionHitbox.X = position.X + hitboxBuff / 2;
-            // positionHitbox.Y = position.Y + hitboxBuff / 2;
+            if (Controller.IsButtonDown(Buttons.A))
+            {
+                Jump();
+            }
+            
 
-            //hitbox.X = (int)positionHitbox.X;
-            // hitbox.Y = (int)positionHitbox.Y;
+            
 
 
+            
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(texture, position, Color.White);
         }
@@ -147,24 +138,30 @@ namespace sspp
 
         #region Gameplay Functions
 
-        public void UpdatePositionX(int d)
+        private void Jump()
+        {
+            Force jumpForce = new Force(0, -1, 25);
+
+            if (position.Y == phyics.Ground)                  // Only can jump if on the ground
+            {
+                phyics.AcceptForce(jumpForce);
+
+            }
+        }
+
+        public override void UpdatePositionX(int d)
         {
             position.X += d;
             if (position.X < 0 + goalBuffer) position.X = goalBuffer;
             else if (position.X > 1920 - texture.Width - goalBuffer) position.X = 1920 - texture.Width - goalBuffer;
         }
 
-        public void UpdatePositionY(int d)
+        public override void UpdatePositionY(int d)
         {
             position.Y += d;
             if (position.Y < phyics.Ground) position.Y = phyics.Ground;
         }
-
-        public void AcceptForce(Force force)
-        {
-            phyics.AcceptForce(force);
-        }
-
+        
         #endregion
 
         #region Helper Functions

@@ -12,14 +12,8 @@ using Microsoft.Xna.Framework.Media;
 
 namespace sspp
 {
-    class Ball
+    class Ball : PhysicsBody
     {
-        private Texture2D texture;
-        private Vector2 position;
-        public Vector2 defaultPosition;
-        private Physics phyics;
-        private Vector2 center;
-        private int radius;
 
         #region Constructors
 
@@ -29,29 +23,19 @@ namespace sspp
         }
 
         #endregion
-
-        public int Radius
-        {
-            get { return radius; }
-        }
-
-        public Vector2 Center
-        {
-            get { return center; }
-        }
-
+        
         #region MonoGame Functions
 
-        protected void Initialize()
+        protected override void Initialize()
         {
-            defaultPosition = new Vector2(960, 500);
+            defaultPosition = new Vector2(935, 520);
             position = defaultPosition;
             center = new Vector2(position.X + texture.Width / 2, position.Y + texture.Width / 2);
             radius = texture.Width / 2 - 2;
-            phyics = new Physics(4, position);
+            phyics = new Physics(4, this);
         }
 
-        public void LoadContent(ContentManager Content)
+        public override void LoadContent(ContentManager Content)
         {
             texture = Content.Load<Texture2D>("ball_1");
 
@@ -59,27 +43,24 @@ namespace sspp
             Initialize();
         }
 
-        public void UnloadContent(ContentManager Content)
+        public override void UnloadContent(ContentManager Content)
         {
 
         }
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
-            phyics.Update(gameTime, ref position);
+            base.Update(gameTime);
+            phyics.Update(gameTime);
 
             position = phyics.GetNewPosition(position);
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(texture, position, Color.White);
         }
-
-        public void AcceptForce(Force force)
-        {
-            phyics.AcceptForce(force);
-        }
+        
 
         #endregion
 

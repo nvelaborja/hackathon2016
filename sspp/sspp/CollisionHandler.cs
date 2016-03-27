@@ -57,7 +57,6 @@ namespace sspp
                 {
                     playerCollide = false;
                 }
-                return;
             }
             else if (DistanceFormulaVector2(player1.Center, player2.Center) < player1.Radius + player2.Radius)
             {
@@ -69,7 +68,18 @@ namespace sspp
 
             if (ballCollide)
             {
-              //  if ()
+                if ((DistanceFormulaVector2(player1.Center, ball.Center) > player1.Radius + ball.Radius) && (DistanceFormulaVector2(player2.Center, ball.Center) > player2.Radius + ball.Radius))
+                {
+                    ballCollide = false;
+                }
+            }
+            else if ((DistanceFormulaVector2(player1.Center, ball.Center) < player1.Radius + ball.Radius) || (DistanceFormulaVector2(player2.Center, ball.Center) < player2.Radius + ball.Radius))
+            {
+                ballCollide = true;
+                sounds.playBall();
+                if (DistanceFormulaVector2(player1.Center, ball.Center) < player1.Radius + ball.Radius)
+                    BallHit(player1);
+                else BallHit(player2);
             }
         }
 
@@ -77,7 +87,10 @@ namespace sspp
 
         #region Gameplay Functions
 
-
+        private void BallHit(Player hitter)
+        {
+            
+        }
 
         #endregion
 

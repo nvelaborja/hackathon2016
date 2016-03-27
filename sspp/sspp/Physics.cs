@@ -16,19 +16,23 @@ namespace sspp
     {
         private float mass;
         private float velocity;
+        private float maxVelocity;
+        private float minVelocity;
         private Vector2 trajectory;
         private Force force;
         public const int ground = 500;
         private const int velocityDecay = 10;
         private Vector2 prevPosition;
         private int movementDamp = 100;
+        private PhysicsBody physicsBody;
 
         #region Constructors
 
-        public Physics(float Mass, Vector2 Position)
+        public Physics(float Mass, PhysicsBody PhysicsBody)
         {
             mass = Mass;
-            prevPosition = Position;
+            physicsBody = PhysicsBody;
+            prevPosition = physicsBody.Position;
             Initialize();
         }
 
@@ -42,6 +46,7 @@ namespace sspp
         public float Velocity
         {
             get { return velocity; }
+            set { velocity = value; }
         }
 
         #region MonoGame Functions
@@ -51,13 +56,13 @@ namespace sspp
             velocity = 0;
             trajectory = new Vector2();
             force = new Force((int)trajectory.X, (int)trajectory.Y, mass);
-            
+            maxVelocity = 16;
+            minVelocity = -16;
         }
 
         protected void LoadContent(ContentManager Content)
         {
-
-
+            
         }
 
         protected void UnloadContent(ContentManager Content)
@@ -65,17 +70,20 @@ namespace sspp
 
         }
 
-        public void Update(GameTime gameTime, ref Vector2 position)
+        public void Update(GameTime gameTime)
         {
-            velocity = (float) Math.Sqrt((double)((Math.Pow(MathHelper.Distance(position.X, prevPosition.X), 2) + Math.Pow(MathHelper.Distance(position.Y, prevPosition.Y), 2))));
+            //velocity = (float) Math.Sqrt((double)((Math.Pow(MathHelper.Distance(physicsBody.Position.X, prevPosition.X), 2) + Math.Pow(MathHelper.Distance(physicsBody.Position.Y, prevPosition.Y), 2))));
+            DecrementVelocity();
+            if (velocity > maxVelocity) velocity = maxVelocity;
+            else if (velocity < minVelocity) velocity = minVelocity;
 
-            trajectory.X = position.X - prevPosition.X;
-            trajectory.Y = position.Y - prevPosition.Y;
+            trajectory.X = physicsBody.Position.X - prevPosition.X;
+            trajectory.Y = physicsBody.Position.Y - prevPosition.Y;
 
             force.Magnitude = mass * velocity;
             force.Trajectory = trajectory;
 
-            prevPosition = position;         
+            prevPosition = physicsBody.Position;         
         }
 
         #endregion
@@ -85,16 +93,14 @@ namespace sspp
         public Force ApplyForce()
         {
             Force adjustedForce = force;
-
-
+            
             return adjustedForce;
         }
 
         public void AcceptForce(Force force)
         {
             velocity += force.Magnitude;
-            trajectory.X += force.Trajectory.X;
-            trajectory.Y += force.Trajectory.Y;
+            trajectory += force.Trajectory;
         }
 
         public Vector2 GetNewPosition(Vector2 Position)
@@ -111,8 +117,19 @@ namespace sspp
 
         #region Helper Functions
 
-
-
+        private void DecrementVelocity()
+        {
+            if (velocity > 0)
+            {
+                velocity--;
+                if (velocity < 0) velocity = 0;
+            }
+            else if (velocity < 0)
+            {
+                velocity++;
+                if (velocity > 0) velocity = 0;
+            }
+        }
         #endregion
     }
 }

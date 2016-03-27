@@ -41,6 +41,7 @@
     <Compile Include="Background.cs" />
     <Compile Include="Ball.cs" />
     <Compile Include="CollisionHandler.cs" />
+    <Compile Include="PhysicsBody.cs" />
     <Compile Include="Force.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Overlay.cs" />
