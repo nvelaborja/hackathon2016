@@ -385,3 +385,9 @@
 /processorParam:TextureFormat=Color
 /build:pause.png
 
+#begin Font.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:Font.spritefont
+

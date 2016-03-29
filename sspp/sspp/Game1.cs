@@ -16,17 +16,17 @@ namespace sspp
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-
-        #region Textures
-
         Texture2D texture_goalFront;
-
-        #endregion
+        SpriteFont font;
 
         #region Game Logic Members
 
         private bool paused;
         private bool menu;
+        private int score1 = 0;
+        private int score2 = 0;
+        private Vector2 score1Pos;
+        private Vector2 score2Pos;
 
         #endregion
 
@@ -41,7 +41,10 @@ namespace sspp
         Ball ball;
         Force gravity;
         List<object> PhysicsObjects;
-
+        Rectangle goal1 = new Rectangle(100, 320, 88, 208);
+        Rectangle goal2 = new Rectangle(1707, 320, 88, 208);
+        Rectangle oob1 = new Rectangle(240, -85, 3, 379);
+        Rectangle oob2 = new Rectangle(1675, -85, 3, 379);
 
         #endregion
 
@@ -106,6 +109,11 @@ namespace sspp
             playPos = new Vector2(550, 300);
             exitPos = new Vector2(550, 400);
 
+            score1Pos = new Vector2(572, 30);
+            score2Pos = new Vector2(1300, 30);
+
+            
+
             base.Initialize();
         }
         
@@ -125,6 +133,8 @@ namespace sspp
             mainMenu = Content.Load<Texture2D>("menu");
             pauseMenu = Content.Load<Texture2D>("pause");
             highligher = Content.Load<Texture2D>("highlight");
+
+            font = Content.Load<SpriteFont>("Font");
 
             sound.LoopMenu();
         }
@@ -188,6 +198,8 @@ namespace sspp
                 ball.Update(gameTime);
 
                 collisionHandler.Update(gameTime);
+
+                CheckGoals();
             }
             base.Update(gameTime);
         }
@@ -208,6 +220,9 @@ namespace sspp
 
             overlay.Draw(spriteBatch);
 
+            spriteBatch.DrawString(font, score1.ToString(), score1Pos, Color.White);
+            spriteBatch.DrawString(font, score2.ToString(), score2Pos, Color.White);
+
             if (menu)
             {
                 if (menuSelector == 1) spriteBatch.Draw(highligher, playPos, Color.White);
@@ -221,6 +236,26 @@ namespace sspp
                 else if (menuSelector == 2) spriteBatch.Draw(highligher, exitPos, Color.White);
                 spriteBatch.Draw(pauseMenu, new Vector2(0, 0), Color.White);
             }
+
+            spriteBatch.DrawString(font, ".", new Vector2(goal1.X, goal1.Y), Color.Red);
+            spriteBatch.DrawString(font, ".", new Vector2(goal1.X + goal1.Width, goal1.Y), Color.Red);
+            spriteBatch.DrawString(font, ".", new Vector2(goal1.X, goal1.Y + goal1.Height), Color.Red);
+            spriteBatch.DrawString(font, ".", new Vector2(goal1.X + goal1.Width, goal1.Y + goal1.Height), Color.Red);
+
+            spriteBatch.DrawString(font, ".", new Vector2(goal2.X, goal2.Y), Color.Red);
+            spriteBatch.DrawString(font, ".", new Vector2(goal2.X + goal2.Width, goal2.Y), Color.Red);
+            spriteBatch.DrawString(font, ".", new Vector2(goal2.X, goal2.Y + goal2.Height), Color.Red);
+            spriteBatch.DrawString(font, ".", new Vector2(goal2.X + goal2.Width, goal2.Y + goal2.Height), Color.Red);
+
+            spriteBatch.DrawString(font, ".", new Vector2(oob1.X, oob1.Y), Color.Blue);
+            spriteBatch.DrawString(font, ".", new Vector2(oob1.X + oob1.Width, oob1.Y), Color.Blue);
+            spriteBatch.DrawString(font, ".", new Vector2(oob1.X, oob1.Y + oob1.Height), Color.Blue);
+            spriteBatch.DrawString(font, ".", new Vector2(oob1.X + oob1.Width, oob1.Y + oob1.Height), Color.Blue);
+
+            spriteBatch.DrawString(font, ".", new Vector2(oob2.X, oob2.Y), Color.Blue);
+            spriteBatch.DrawString(font, ".", new Vector2(oob2.X + oob2.Width, oob2.Y), Color.Blue);
+            spriteBatch.DrawString(font, ".", new Vector2(oob2.X, oob2.Y + oob2.Height), Color.Blue);
+            spriteBatch.DrawString(font, ".", new Vector2(oob2.X + oob2.Width, oob2.Y + oob2.Height), Color.Blue);
 
             base.Draw(gameTime);
 
@@ -241,6 +276,7 @@ namespace sspp
                 if (menuSelector == 1)
                 {
                     menu = false;
+                    Reset();
                 }
                 else if (menuSelector == 2)
                 {
@@ -261,6 +297,59 @@ namespace sspp
                     menu = true;
                 }
             }
+        }
+
+        private void Score(int playerNum)
+        {
+            sound.playGoal();
+
+            if (playerNum == 1) score1++;
+            else if (playerNum == 2) score2++;
+
+            System.Threading.Thread.Sleep(3000);
+
+            Reset();
+
+            if (score1 == 5 || score2 == 5)
+            {
+                GameOver();
+            }
+        }
+
+        private void CheckGoals()
+        {
+            if (DistanceFormulaVector2(ball.Position, new Vector2(goal1.Right, ball.Center.Y)) < ball.Radius) Score(2);
+            else if (DistanceFormulaVector2(ball.Position, new Vector2(goal2.Left, ball.Center.Y)) < ball.Radius) Score(1);
+            else if (DistanceFormulaVector2(ball.Position, new Vector2(oob1.Right, ball.Center.Y)) < ball.Radius) Reset();
+            else if (DistanceFormulaVector2(ball.Position, new Vector2(oob2.Left, ball.Center.Y)) < ball.Radius) Reset();
+        }
+
+        private int DistanceFormulaVector2(Vector2 point1, Vector2 point2)
+        {
+            int distance = 0;
+
+            distance = (int)Math.Sqrt(((Math.Pow(MathHelper.Distance(point2.X, point1.X), 2) + Math.Pow(MathHelper.Distance(point2.Y, point1.Y), 2))));
+
+            return distance;
+        }
+
+        private void Reset()
+        {
+            player1.position = player1.defaultPosition;
+            player2.position = player2.defaultPosition;
+            ball.position = ball.defaultPosition;
+        }
+
+        private void ResetScore()
+        {
+            score1 = 0;
+            score2 = 0;
+        }
+
+        private void GameOver()
+        {
+            sound.playWhistle();
+            menu = true;
         }
     }
 }

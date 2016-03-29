@@ -57,7 +57,7 @@ namespace sspp
             position = physics.GetNewPosition(position);
             
             center.X = position.X + texture.Width / 2;
-            center.Y = position.Y + texture.Height;
+            center.Y = position.Y + texture.Height / 2;
         }
 
         public override void Draw(SpriteBatch spriteBatch)
