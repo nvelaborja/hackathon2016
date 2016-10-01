@@ -18,6 +18,8 @@ namespace sspp
         SpriteBatch spriteBatch;
         Texture2D texture_goalFront;
         SpriteFont font;
+        private bool controllerMode1 = false;
+        private bool controllerMode2 = false;
 
         #region Game Logic Members
 
@@ -146,50 +148,15 @@ namespace sspp
         
         protected override void Update(GameTime gameTime)
         {
+            SearchForControllers();
+
             if (menu || paused)
             {
-                GamePadState Controller1 = GamePad.GetState(PlayerIndex.One);
-                GamePadState Controller2 = GamePad.GetState(PlayerIndex.Two);
-
-                if (Controller1.ThumbSticks.Left.Y == 1 || Controller2.ThumbSticks.Left.Y == 1)
-                {
-                    if (menuSelector == 2)
-                    {
-                        menuSelector = 1;
-                        sound.playButtonHover();
-                    }
-                }
-                else if (Controller1.ThumbSticks.Left.Y == -1 || Controller2.ThumbSticks.Left.Y == -1)
-                {
-                    if (menuSelector == 1)
-                    {
-                        menuSelector = 2;
-                        sound.playButtonHover();
-                    }
-                }
-
-                if (Controller1.IsButtonDown(Buttons.A) || Controller2.IsButtonDown(Buttons.A))
-                {
-                    if (buttonCoolDown < 0)
-                    {
-                        buttonCoolDown = 60;
-                        sound.playButtonClick();
-                        Select();
-                    }
-                    
-                }
-                buttonCoolDown--;
+                ProcessMenuInput();
             }
             else
             {
-                GamePadState Controller1 = GamePad.GetState(PlayerIndex.One);
-                GamePadState Controller2 = GamePad.GetState(PlayerIndex.Two);
-
-                if (Controller1.IsButtonDown(Buttons.Start) || Controller2.IsButtonDown(Buttons.Start))
-                {
-                    sound.playButtonClick();
-                    paused = true;
-                }
+                ProcessGameInput();
 
                 ApplyGravity();
 
@@ -318,14 +285,15 @@ namespace sspp
 
         private void CheckGoals()
         {
-            if (DistanceFormulaVector2(ball.Position, new Vector2(goal1.Right, ball.Center.Y)) < ball.Radius) Score(2);
-            else if (DistanceFormulaVector2(ball.Position, new Vector2(goal2.Left, ball.Center.Y)) < ball.Radius) Score(1);
-            else if (DistanceFormulaVector2(ball.Position, new Vector2(oob1.Right, ball.Center.Y)) < ball.Radius) Reset();
-            else if (DistanceFormulaVector2(ball.Position, new Vector2(oob2.Left, ball.Center.Y)) < ball.Radius) Reset();
+            if (DistanceFormulaVector2(ball.center, new Vector2(goal1.Right, ball.Center.Y)) < ball.Radius) Score(2);
+            else if (DistanceFormulaVector2(ball.center, new Vector2(goal2.Left, ball.Center.Y)) < ball.Radius) Score(1);
+            else if (DistanceFormulaVector2(ball.center, new Vector2(oob1.Right, ball.Center.Y)) < ball.Radius) Reset();
+            else if (DistanceFormulaVector2(ball.center, new Vector2(oob2.Left, ball.Center.Y)) < ball.Radius) Reset();
         }
 
         private int DistanceFormulaVector2(Vector2 point1, Vector2 point2)
         {
+            if (!GoodPoint(point1) || !GoodPoint(point2)) return -1;
             int distance = 0;
 
             distance = (int)Math.Sqrt(((Math.Pow(MathHelper.Distance(point2.X, point1.X), 2) + Math.Pow(MathHelper.Distance(point2.Y, point1.Y), 2))));
@@ -350,6 +318,121 @@ namespace sspp
         {
             sound.playWhistle();
             menu = true;
+            ResetScore();
+        }
+
+        private bool GoodPoint(Vector2 point)
+        {
+            if (double.IsNaN(point.X) || double.IsNaN(point.Y)) return false;
+            return true;
+        }
+
+        private bool GoodPoint(Point point)
+        {
+            if (double.IsNaN(point.X) || double.IsNaN(point.Y)) return false;
+            return true;
+        }
+
+        private void ProcessMenuInput()
+        {
+            GamePadState Controller1 = GamePad.GetState(PlayerIndex.One);
+            GamePadState Controller2 = GamePad.GetState(PlayerIndex.Two);
+            KeyboardState keyboardState = Keyboard.GetState();
+            bool controller1Up = false;
+            bool controller1Down = false;
+            bool controller2Up = false;
+            bool controller2Down = false;
+            bool select = false;
+
+            if (keyboardState.IsKeyDown(Keys.I)) sound.playButtonClick();
+
+            if (controllerMode1)
+            {
+                if (Controller1.ThumbSticks.Left.Y == 1) controller1Up = true;
+                else if (Controller1.ThumbSticks.Left.Y == -1) controller1Down = true;
+                if (Controller1.IsButtonDown(Buttons.A)) select = true;
+            }
+            else
+            {
+                if (keyboardState.IsKeyDown(Keys.W)) controller1Up = true;
+                else if (keyboardState.IsKeyDown(Keys.S)) controller1Down = true;
+                if (keyboardState.IsKeyDown(Keys.Space)) select = true;
+            }
+            if (controllerMode2)
+            {
+                if (Controller2.ThumbSticks.Left.Y == 1) controller2Up = true;
+                else if (Controller2.ThumbSticks.Left.Y == -1) controller2Down = true;
+                if (Controller2.IsButtonDown(Buttons.A)) select = true;
+            }
+            else
+            {
+                if (keyboardState.IsKeyDown(Keys.Up)) controller2Up = true;
+                else if (keyboardState.IsKeyDown(Keys.Down)) controller2Down = true;
+                if (keyboardState.IsKeyDown(Keys.NumPad0)) select = true;
+            }
+
+            if (controller1Up || controller2Up)
+            {
+                if (menuSelector == 2)
+                {
+                    menuSelector = 1;
+                    sound.playButtonHover();
+                }
+            }
+            else if (controller1Down || controller2Down)
+            {
+                if (menuSelector == 1)
+                {
+                    menuSelector = 2;
+                    sound.playButtonHover();
+                }
+            }
+
+            if (select)
+            {
+                if (buttonCoolDown < 0)
+                {
+                    buttonCoolDown = 60;
+                    sound.playButtonClick();
+                    Select();
+                }
+
+            }
+            buttonCoolDown--;
+        }
+
+        private void ProcessGameInput()
+        {
+            GamePadState Controller1 = GamePad.GetState(PlayerIndex.One);
+            GamePadState Controller2 = GamePad.GetState(PlayerIndex.Two);
+            KeyboardState keyboardState = Keyboard.GetState();
+
+            if (Controller1.IsConnected && Controller2.IsConnected)
+            {
+                if (Controller1.IsButtonDown(Buttons.Start) || Controller2.IsButtonDown(Buttons.Start))
+                {
+                    sound.playButtonClick();
+                    paused = true;
+                }
+                return;
+            }
+
+            if (keyboardState.IsKeyDown(Keys.Escape))
+            {
+                sound.playButtonClick();
+                paused = true;
+            }
+        }
+
+        private void SearchForControllers()
+        {
+            GamePadState Controller1 = GamePad.GetState(PlayerIndex.One);
+            GamePadState Controller2 = GamePad.GetState(PlayerIndex.Two);
+
+            if (Controller1.IsConnected) controllerMode1 = true;
+            else controllerMode1 = false;
+            if (Controller2.IsConnected) controllerMode2 = true;
+            else controllerMode2 = false;
         }
     }
 }

@@ -52,7 +52,7 @@ namespace sspp
             zeroPoint = new Point(0, 0);
             movementDamp = 6;
             goalBuffer = 100;
-            physics = new Physics(23, this);
+            physics = new Physics(40, this);
             center = new Vector2(texture.Width / 2, texture.Height);
             radius = 50;
             sounds = new SoundManager();
@@ -93,22 +93,57 @@ namespace sspp
             else if (playerNum == 2)
                 Controller = GamePad.GetState(PlayerIndex.Two);
 
+            KeyboardState keyboardState = Keyboard.GetState();
+
             //if (!Controller.IsConnected) paused = true;                                             // If either controller is disconnected, pause the game!
 
             Force movement = new Force(0, 0, 0);
 
-            if (Controller.ThumbSticks.Left.X != 0)
+            if (Controller.IsConnected)
             {
-                int Xdir = 0;
-                if (Controller.ThumbSticks.Left.X > 0) Xdir = 1;
-                else Xdir = -1;
-                movement = new Force(Xdir, 0, (int)(Controller.ThumbSticks.Left.X * 100 / movementDamp));
-                //UpdatePositionX((int)(Controller.ThumbSticks.Left.X * 100 / movementDamp));
-                //Physics.Velocity = Controller.ThumbSticks.Left.X * 100 / movementDamp;
-                physics.AcceptForce(movement);
-                position = Physics.GetNewPosition(Position);
-                //phyics.AcceptForce(new Force(-(int)(Controller.ThumbSticks.Left.X * 100 / movementDamp), 0, 1));
+                if (Controller.ThumbSticks.Left.X != 0)
+                {
+                    int Xdir = 0;
+                    if (Controller.ThumbSticks.Left.X > 0) Xdir = 1;
+                    else Xdir = -1;
+                    if (Xdir != 0)
+                    {
+                        movement = new Force(Xdir, 0, (int)(Controller.ThumbSticks.Left.X * 100 / movementDamp));
+                        physics.AcceptForce(movement);
+                    }
+                    position = Physics.GetNewPosition(Position);
+                }
             }
+            else
+            {
+                if (playerNum == 1)
+                {
+                    int Xdir = 0;
+                    if (keyboardState.IsKeyDown(Keys.D)) Xdir = 1;
+                    else if (keyboardState.IsKeyDown(Keys.A)) Xdir = -1;
+                    if (Xdir != 0)
+                    {
+                        movement = new Force(Xdir, 0, 100 / movementDamp);
+                        physics.AcceptForce(movement);
+                    }
+                    position = Physics.GetNewPosition(Position);
+                }
+                else
+                {
+                    int Xdir = 0;
+                    if (keyboardState.IsKeyDown(Keys.Right)) Xdir = 1;
+                    else if (keyboardState.IsKeyDown(Keys.Left)) Xdir = -1;
+                    if (Xdir != 0)
+                    {
+                        movement = new Force(Xdir, 0, 100 / movementDamp);
+                        physics.AcceptForce(movement);
+                    }
+                    position = Physics.GetNewPosition(Position);
+                }
+            }
+
+
+            
             base.Update(gameTime);
 
             if (position.X < 0 + goalBuffer) position.X = goalBuffer;
@@ -122,15 +157,18 @@ namespace sspp
             center.X = position.X + texture.Width / 2;
             center.Y = position.Y + texture.Height;
 
-            if (Controller.IsButtonDown(Buttons.A))
+            if (Controller.IsConnected)
             {
-                Jump();
+                if (Controller.IsButtonDown(Buttons.A)) Jump();
             }
-            
-
-            
-
-
+            else
+            {
+                if (playerNum == 1)
+                {
+                    if (keyboardState.IsKeyDown(Keys.Space)) Jump();
+                }
+                else if (keyboardState.IsKeyDown(Keys.NumPad0)) Jump();
+            }
             
         }
 

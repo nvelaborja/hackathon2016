@@ -105,7 +105,9 @@ namespace sspp
         public Force ApplyForce()
         {
             Force adjustedForce = force;
-            
+
+            adjustedForce.Magnitude *= 100;
+
             return adjustedForce;
         }
 
@@ -120,6 +122,9 @@ namespace sspp
         public Vector2 GetNewPosition(Vector2 Position)
         {
             Vector2 newPosition = Position;
+
+            if (double.IsNaN(velocityX)) velocityX = 0;
+            if (double.IsNaN(velocityY)) velocityY = 0;
 
             newPosition.X += velocityX * mass / movementDamp;
             newPosition.Y += velocityY * mass / movementDamp;

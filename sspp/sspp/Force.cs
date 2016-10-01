@@ -42,7 +42,6 @@ namespace sspp
             set
             {
                 trajectory = value;
-                trajectory = UnitVector((int)trajectory.X, (int)trajectory.Y);
             }
         }
         

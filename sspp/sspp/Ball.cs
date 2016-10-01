@@ -28,18 +28,16 @@ namespace sspp
 
         protected override void Initialize()
         {
-            defaultPosition = new Vector2(935, 520);
+            defaultPosition = new Vector2(935, 20000);
             position = defaultPosition;
             center = new Vector2(position.X + texture.Width / 2, position.Y + texture.Width / 2);
             radius = texture.Width / 2 - 2;
-            physics = new Physics(23, this);
+            physics = new Physics(100, this);
         }
 
         public override void LoadContent(ContentManager Content)
         {
             texture = Content.Load<Texture2D>("ball_1");
-
-
             Initialize();
         }
 
